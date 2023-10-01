@@ -6,9 +6,12 @@ const app = express();
 const sequelize = require("./util/db");
 const User = require("./models/user");
 const Product = require("./models/product");
+const Cart = require("./models/cart");
+const CartItem = require("./models/cartItem");
 
 const adminRoutes = require("./routes/admin");
 const authRoutes = require("./routes/auth");
+const cartRoutes = require("./routes/cart");
 
 app.use(bodyParser.json());
 
@@ -16,8 +19,15 @@ app.use(bodyParser.json());
 User.hasMany(Product);
 Product.belongsTo(User);
 
+User.hasOne(Cart);
+Cart.belongsTo(User);
+
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
+
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/cart", cartRoutes);
 
 app.use((req, res, next) => {
   const error = new Error("Could not found.");

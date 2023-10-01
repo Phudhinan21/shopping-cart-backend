@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
+const Cart = require("../models/cart");
 
 exports.getUser = async (req, res, next) => {
   try {
@@ -46,14 +47,16 @@ exports.postCreateUser = async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const result = await User.create({
+    const userResult = await User.create({
       name,
       email,
       password: hashedPassword,
     });
 
+    const cartResult = await Cart.create({ UserId: userResult.id });
+
     const token = jwt.sign(
-      { user: { userId: result.id } },
+      { user: { userId: userResult.id } },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -61,7 +64,7 @@ exports.postCreateUser = async (req, res, next) => {
     res.status(201).json({
       message: "Signup successfull",
       token: token,
-      user: { userId: result.id },
+      user: { userId: userResult.id },
     });
   } catch (error) {
     return next(error);
