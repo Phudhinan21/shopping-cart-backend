@@ -37,7 +37,7 @@ exports.postAddProduct = async (req, res, next) => {
       price,
       imageUrl,
       description,
-      userId: req.userId,
+      UserId: req.userId,
     });
 
     res

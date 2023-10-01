@@ -1,7 +1,6 @@
 const { DataTypes } = require("sequelize");
 
 const sequelize = require("../util/db");
-const User = require("./user");
 
 const Product = sequelize.define("Product", {
   id: {
@@ -25,13 +24,6 @@ const Product = sequelize.define("Product", {
   description: {
     type: DataTypes.STRING,
     allowNull: false,
-  },
-  userId: {
-    type: DataTypes.UUID,
-    references: {
-      model: User,
-      key: "id",
-    },
   },
 });
 
