@@ -7,12 +7,18 @@ exports.getUser = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.userId);
 
+    if (!user) {
+      const error = new Error("Not Authenticated, No account.");
+      error.code = 401;
+      throw error;
+    }
+
     res.status(200).json({
       message: "Authenticated successfull",
       user: { userId: user.id },
     });
   } catch (error) {
-    console.log(error);
+    return next(error);
   }
 };
 
@@ -30,6 +36,14 @@ exports.postCreateUser = async (req, res, next) => {
   const { name, email, password } = req.body;
 
   try {
+    const user = await User.findOne({ where: { email: email } });
+
+    if (user) {
+      const error = new Error("This email already exist, pleas try again.");
+      error.code = 401;
+      throw error;
+    }
+
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const result = await User.create({
@@ -50,7 +64,7 @@ exports.postCreateUser = async (req, res, next) => {
       user: { userId: result.id },
     });
   } catch (error) {
-    console.log(error);
+    return next(error);
   }
 };
 
@@ -59,6 +73,20 @@ exports.postLoginUser = async (req, res, next) => {
 
   try {
     const user = await User.findOne({ where: { email: email } });
+
+    if (!user) {
+      const error = new Error("Not Authenticated, please signup.");
+      error.code = 401;
+      throw error;
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      const error = new Error("Not Authenticated, Please check your password.");
+      error.code = 401;
+      throw error;
+    }
 
     const token = jwt.sign(
       { user: { userId: user.id } },
@@ -72,16 +100,24 @@ exports.postLoginUser = async (req, res, next) => {
       user: { userId: user.id },
     });
   } catch (error) {
-    console.log(error);
+    return next(error);
   }
 };
 
 exports.postDeleteUser = async (req, res, next) => {
   try {
+    const user = await User.findByPk(req.userId);
+
+    if (!user) {
+      const error = new Error("Not Authenticated, No account.");
+      error.code = 401;
+      throw error;
+    }
+
     const result = await User.destroy({ where: { id: req.userId } });
 
     res.status(200).json({ message: "Delete user successfull", user: result });
   } catch (error) {
-    console.log(error);
+    return next(error);
   }
 };
