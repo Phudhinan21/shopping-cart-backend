@@ -5,11 +5,11 @@ const app = express();
 
 const sequelize = require("./util/db");
 
+const adminRoutes = require("./routes/admin");
+
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-  res.send("hello");
-});
+app.use("/api/admin", adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 
