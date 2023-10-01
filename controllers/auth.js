@@ -28,7 +28,7 @@ exports.getAllUsers = async (req, res, next) => {
 
     res.status(200).json({ message: "All users", users: users });
   } catch (error) {
-    console.log(error);
+    return next(error);
   }
 };
 

@@ -26,13 +26,13 @@ const Product = sequelize.define("Product", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  //   userId: {
-  //     type: DataTypes.UUID,
-  //     references: {
-  //       model: User,
-  //       key: "id",
-  //     },
-  //   },
+  userId: {
+    type: DataTypes.UUID,
+    references: {
+      model: User,
+      key: "id",
+    },
+  },
 });
 
 module.exports = Product;

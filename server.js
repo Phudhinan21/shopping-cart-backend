@@ -19,6 +19,12 @@ Product.belongsTo(User);
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
 
+app.use((req, res, next) => {
+  const error = new Error("Could not found.");
+  error.code = 404;
+  return next(error);
+});
+
 app.use((error, req, res, next) => {
   const message = error.message || "Server error";
   const statusCode = error.code || 500;
