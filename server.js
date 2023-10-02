@@ -8,10 +8,13 @@ const User = require("./models/user");
 const Product = require("./models/product");
 const Cart = require("./models/cart");
 const CartItem = require("./models/cartItem");
+const Order = require("./models/order");
+const OrderItem = require("./models/orderItem");
 
 const adminRoutes = require("./routes/admin");
 const authRoutes = require("./routes/auth");
 const cartRoutes = require("./routes/cart");
+const orderRoutes = require("./routes/order");
 
 app.use(bodyParser.json());
 
@@ -25,9 +28,16 @@ Cart.belongsTo(User);
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
 
+User.hasMany(Order);
+Order.belongsTo(User);
+
+Order.belongsToMany(Product, { through: OrderItem });
+Product.belongsToMany(Order, { through: OrderItem });
+
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/order", orderRoutes);
 
 app.use((req, res, next) => {
   const error = new Error("Could not found.");
