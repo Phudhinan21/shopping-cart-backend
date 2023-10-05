@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { validationResult } = require("express-validator");
 
 const User = require("../models/user");
 const Cart = require("../models/cart");
@@ -34,6 +35,17 @@ exports.getAllUsers = async (req, res, next) => {
 };
 
 exports.postCreateUser = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error("Invalid input, please try again");
+      error.code = 422;
+      throw error;
+    }
+  } catch (error) {
+    return next(error);
+  }
+
   const { name, email, password } = req.body;
 
   try {

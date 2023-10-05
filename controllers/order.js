@@ -35,6 +35,8 @@ exports.postOrder = async (req, res, next) => {
       })
     );
 
+    CartItem.destroy({ where: { CartId: cart.id } });
+
     res
       .status(201)
       .json({ message: "create order successfull", order, orderItem });

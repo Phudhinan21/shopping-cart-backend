@@ -1,3 +1,4 @@
+const { validationResult } = require("express-validator");
 const Product = require("../models/product");
 
 exports.getAllProducts = async (req, res, next) => {
@@ -29,6 +30,17 @@ exports.getProductById = async (req, res, next) => {
 };
 
 exports.postAddProduct = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error("Invalid input, please try again.");
+      error.code = 422;
+      throw error;
+    }
+  } catch (error) {
+    return next(error);
+  }
+
   const { title, price, imageUrl, description } = req.body;
 
   try {
@@ -49,6 +61,17 @@ exports.postAddProduct = async (req, res, next) => {
 };
 
 exports.postEditProduct = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error("Invalid input, please try again.");
+      error.code = 422;
+      throw error;
+    }
+  } catch (error) {
+    return next(error);
+  }
+
   const { productId } = req.params;
   const { title, price, imageUrl, description } = req.body;
 
@@ -61,9 +84,9 @@ exports.postEditProduct = async (req, res, next) => {
       throw error;
     }
 
-    if (req.userId !== product.userId) {
+    if (req.userId !== product.UserId) {
       const error = new Error(
-        "Not authenticated to delete product, please try again."
+        "Not authenticated to change product details, please try again."
       );
       error.code = 401;
       throw error;
@@ -95,7 +118,7 @@ exports.postDeleteProduct = async (req, res, next) => {
       throw error;
     }
 
-    if (req.userId !== product.userId) {
+    if (req.userId !== product.UserId) {
       const error = new Error(
         "Not authenticated to delete product, please try again."
       );

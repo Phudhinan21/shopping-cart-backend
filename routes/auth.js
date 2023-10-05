@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { check } = require("express-validator");
 
 const authControllers = require("../controllers/auth");
 const auth = require("../middleware/auth");
@@ -11,7 +12,15 @@ router.get("/", auth, authControllers.getUser);
 router.get("/users", authControllers.getAllUsers);
 
 // @route   POST /api/auth/signup
-router.post("/signup", authControllers.postCreateUser);
+router.post(
+  "/signup",
+  [
+    check("name").notEmpty(),
+    check("email").normalizeEmail().isEmail(),
+    check("password").isLength({ min: 6 }),
+  ],
+  authControllers.postCreateUser
+);
 
 // @route   POST /api/auth/login
 router.post("/login", authControllers.postLoginUser);

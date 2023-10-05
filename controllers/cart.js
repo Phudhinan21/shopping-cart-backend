@@ -4,7 +4,7 @@ const Product = require("../models/product");
 
 exports.getCart = async (req, res, next) => {
   try {
-    const cart = await Cart.findOne({ where: { userId: req.userId } });
+    const cart = await Cart.findOne({ where: { UserId: req.userId } });
 
     const cartItem = await CartItem.findAll({ where: { CartId: cart.id } });
 
@@ -24,7 +24,7 @@ exports.postCartAddProduct = async (req, res, next) => {
   const { productId } = req.body;
 
   try {
-    const cart = await Cart.findOne({ where: { userId: req.userId } });
+    const cart = await Cart.findOne({ where: { UserId: req.userId } });
 
     if (!cart) {
       const error = new Error("Not found cart, please try again.");
@@ -68,7 +68,7 @@ exports.postCartDeleteProduct = async (req, res, next) => {
   const { productId } = req.params;
 
   try {
-    const cart = await Cart.findOne({ where: { userId: req.userId } });
+    const cart = await Cart.findOne({ where: { UserId: req.userId } });
 
     if (!cart) {
       const error = new Error("Not found cart, please try again.");
